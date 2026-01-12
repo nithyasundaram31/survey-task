@@ -4,16 +4,21 @@ const responseServices={
 createResponse:async(userData)=>{
     return await instance.post('/response',userData)
 },
+getAllResponse:async()=>{
+    return await instance.get('/response')
+},
 getResponse:async()=>{
     return await instance.get('/response/submitted')
 },
-getSurveyResult:async(id)=>{
-return await instance.get(`/response/${id}`)
-},
 getSurveySummary:async()=>{
-    const res= await instance.get('/response/summary')
-  return res
-}
+    return await instance.get('/response/summary') 
+},
+
+getSurveyResult:async(id)=>{
+const res=await instance.get(`/response/${id}`);
+console.log('survey api result is:',res)
+return res
+},
 
 
 
