@@ -33,6 +33,16 @@ exports.getResponses = async (req, res) => {
   }
 };
 
+exports.getAllResponse=async(req,res)=>{
+try{
+const response= await Response.find();
+return res.status(200).json(response)
+
+}catch(err){
+return res.status(500).json({message:"Server error",error:err.message})
+}
+},
+
 exports.getSurveySummary = async (req, res) => {
   try {
   
@@ -58,30 +68,50 @@ exports.getSurveySummary = async (req, res) => {
   }
 };
 
-exports.getSurveyResult=async(req,res)=>{
-    try{
-const responses=await Response.find({survey:req.params.surveyId})
+exports.getSurveyResult = async (req, res) => {
+  try {
+  
+    const survey = await Survey.findById(req.params.id);
 
-const result={}
-responses.forEach((response)=>{
-    response.answers.forEach((ans)=>{
-const qId=ans.questionId.toString();
-const answer=ans.answer
+    if (!survey) {
+      return res.status(404).json({ message: "Survey not found" });
+    }
 
-if(!result[qId]){
-    result[qId]={}
-}
+    const questionMap = {};
+    survey.questions.forEach((q) => {
+      questionMap[q._id.toString()] = q;
+    });
 
-if(!result[qId][answer]){
-    result[qId][answer]=0
-}
 
-result[qId][answer]++
-    })
-})
+    const responses = await Response.find({ survey: req.params.id });
 
-return res.status(200).json(result)
-}catch(err){
-return res.status(500).json({message:err.message})
-}
-}
+    const result = {};
+
+    responses.forEach((response) => {
+      response.answers.forEach((ans) => {
+        const qId = ans.questionId.toString();
+        const answer = ans.answer;
+
+        if (!result[qId]) {
+          result[qId] = {
+            questionText: questionMap[qId]?.questionText,
+            options: questionMap[qId]?.options || [],
+            totalResponses: 0,
+            answers: {}
+          };
+        }
+
+        if (!result[qId].answers[answer]) {
+          result[qId].answers[answer] = 0;
+        }
+
+        result[qId].answers[answer]++;
+        result[qId].totalResponses++;
+      });
+    });
+
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
