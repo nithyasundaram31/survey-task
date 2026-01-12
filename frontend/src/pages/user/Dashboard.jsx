@@ -2,8 +2,13 @@
 import { BarChart2, BarChart3, FileText, PlusCircle, Send, Users } from "lucide-react"
 import Navbar from "../../components/Navbar"
 import { useNavigate } from "react-router-dom"
+import surveyServices from "../../services/surveyServices"
+import { useEffect, useState } from "react"
+import responseServices from "../../services/responseServices"
 
 function Dashboard(){
+    const[surveys,setSurveys]=useState([]);
+  const[responses,setResponses]=useState([])
 const navigate=useNavigate()
     const handleSurvey=()=>{
 navigate('/create-survey')
@@ -16,6 +21,34 @@ navigate('/create-survey')
     const handleResult=()=>{
         navigate('/result')
     }
+
+     useEffect(()=>{
+ const fetchSurvey=async()=>{
+    try{
+     const response=await surveyServices.getAllSurvey();
+     setSurveys(response.data)
+     console.log('fetch all survey:',response.data)
+    }catch(err){
+        console.log("fetch survey error is:",err)
+    }
+
+        }
+        fetchSurvey()
+    },[]);
+
+     useEffect(()=>{
+ const fetchResponse=async()=>{
+    try{
+     const response=await responseServices.getAllResponse();
+     setResponses(response.data)
+     console.log('fetch all responses:',response.data)
+    }catch(err){
+        console.log("fetch survey error is:",err)
+    }
+
+        }
+        fetchResponse()
+    },[])
   return(
   <> <div><Navbar/></div>
   
@@ -23,12 +56,12 @@ navigate('/create-survey')
     <div className="grid grid-col-3 gap-4 ">
         <div className="bg-blue-100 border p-6 rounded-lg ">
             <div className="text-blue-600"><FileText size={36}/></div>
-            <div>4</div>
- <div>Survey Response</div>
+            <div className="font-bold text-xl">{surveys.length}</div>
+ <div>Surveys Created</div>
         </div>
          <div className=" bg-green-100 border p-6  rounded-lg">
             <div className="text-green-600"><Users size={36}/></div>
-            <div>4</div>
+            <div className="font-bold text-xl">{responses?.length}</div>
  <div>Survey Response</div>
         </div>
          <div className=" bg-violet-100 border p-6 rounded-lg">
