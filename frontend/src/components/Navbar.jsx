@@ -1,9 +1,16 @@
 import { Home, LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar(){
+    const navigate=useNavigate();
  const user=JSON.parse(localStorage.getItem('user'));
 console.log('logged in user :',user);
+
+const handleLogout=()=>{
+localStorage.removeItem('user');
+ localStorage.removeItem("token");
+navigate('/login')
+}
 return(
     <>
     <div className="bg-white top-0 z-[50] fixed w-full p-4  shadow-md" > 
@@ -17,7 +24,7 @@ return(
                 </div>
             <div className="flex gap-2">
             <div className="text-center text-gray-600">Hi, {user?.name.slice(0,1).toUpperCase()+user?.name.slice(1).toLowerCase()}</div>
-           <span className=" mt-1 text-red-600"><LogOut size={20}/></span>
+           <span  onClick={handleLogout} className=" mt-1 text-red-600"><LogOut size={20}/></span>
             </div>
             </div>
            
