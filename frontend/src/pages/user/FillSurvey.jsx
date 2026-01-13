@@ -53,9 +53,9 @@ const availableSurvey=surveys.filter((survey)=>!submittedAns.includes(survey._id
         : (availableSurvey.map((survey)=>
      <div  key={survey?._id} className="border rounded  mx-auto flex flex-col w-[70%] mb-4 "> 
     <button onClick={()=>handleSurvey(survey?._id)}>
-         <div className="flex flex-col justify-start items-start p-4">
+         <div className="flex flex-col justify-start items-start gap-2 p-4">
         <div className="font-semibold text-lg ">{survey?.title}</div>
-<div className="text-base text-gray-500">{survey?.description}</div>
+<div className=" text-sm text-gray-500">{survey?.description}</div>
 <div className="text-xs text-gray-500 ">{survey?.questions?.length} Questions</div>
      </div>
     </button>
