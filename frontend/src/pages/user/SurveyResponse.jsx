@@ -29,7 +29,7 @@ const handleChange=(questionId,selectedAnswer)=>{
  setAnswers((prev)=>{
     const found=prev.find((q)=>q.questionId===questionId)
 if(found){
-    return prev.map((q)=>q.questionId===questionId?{...q,answers:selectedAnswer}:q)
+    return prev.map((q)=>q.questionId===questionId?{...q,answer:selectedAnswer}:q)
 }else{
  return [...prev,{questionId,answer:selectedAnswer}]
 }
@@ -64,14 +64,19 @@ toast.error(response.data?.error)
 <div className="text-lg font-bold mb-2">{surveyId?.title}</div>
 <div >{surveyId?.questions.map((q)=>
 <div className="flex flex-col border rounded  mb-2 p-4">
-    <div className="mb-2 text-base font-semibold">{q?.questionText}</div>
+    <div className=" mb-2 text-base font-semibold">{q?.questionText}</div>
    
    {q?.options.map((opt,i)=>
 <label className="flex gap-1" key={i} >
 <input  type='radio' onChange={()=>handleChange(q._id,opt)} name={q?._id} value={opt}/>{opt}
 </label>
 )}
+
+<div>{q.questionType==='text' &&(
+    <input type='text' onChange={(e) => handleChange(q._id, e.target.value)}  className="border rounded mt-2 w-full p-2" />
+)}</div>
     </div>)}</div>
+    
              </div>
             )}
 <button  className='text-white bg-blue-500 p-2 rounded transition transform active:scale-90' type='submit'>Submit Survey</button>

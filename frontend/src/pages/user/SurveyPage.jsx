@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "../../components/Navbar";
 import surveyServices from "../../services/surveyServices";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function SurveyPage() {
   const [title, setTitle] = useState("");
@@ -69,6 +70,12 @@ function SurveyPage() {
         questions,
       });
       console.log("Survey created:", response.data);
+      setTitle('')
+      setDescription('');
+     handleQuestionText(0, "")
+
+      toast.success( response.data?.message)
+      
     } catch (err) {
       console.log("survey created error:", err);
     }
