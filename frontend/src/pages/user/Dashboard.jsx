@@ -1,14 +1,25 @@
 
-import { BarChart2, BarChart3, FileText, PlusCircle, Send, Users } from "lucide-react"
+import { BarChart3, FileText, PlusCircle, Send, Users } from "lucide-react"
 import Navbar from "../../components/Navbar"
 import { useNavigate } from "react-router-dom"
 import surveyServices from "../../services/surveyServices"
 import { useEffect, useState } from "react"
 import responseServices from "../../services/responseServices"
 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer
+} from "recharts";
+
+
 function Dashboard(){
     const[surveys,setSurveys]=useState([]);
-  const[responses,setResponses]=useState([])
+  const[responses,setResponses]=useState([]);
+  const[chartData,setChartData]=useState([])
 const navigate=useNavigate()
     const handleSurvey=()=>{
 navigate('/create-survey')
@@ -48,11 +59,28 @@ navigate('/create-survey')
 
         }
         fetchResponse()
-    },[])
+    },[]);
+useEffect(()=>{
+  const fetchSruveySummery=async()=>{
+    try{
+const response=await responseServices.getSurveySummary();
+console.log('survey summary response is:',response.data)
+setChartData(response.data)
+    }catch(err){
+console.log('survey summary  error is:',err)
+    }
+
+  }
+  fetchSruveySummery();
+},[])
+   
+
+
+
   return(
   <> <div><Navbar/></div>
   
-  <div className="mx-auto  p-4 mt-16 w-full  md:w-[60%] h-auto  ">
+  <div className="mx-auto  p-4 mt-24 w-full  md:w-[60%] h-auto  ">
     <div className="grid grid-col-3 gap-4 ">
         <div className="bg-blue-100 border p-6 rounded-lg ">
             <div className="text-blue-600"><FileText size={36}/></div>
@@ -64,14 +92,21 @@ navigate('/create-survey')
             <div className="font-bold text-xl">{responses?.length}</div>
  <div>Survey Response</div>
         </div>
-         <div className=" bg-violet-100 border p-6 rounded-lg">
-            <div className="text-violet-600"><BarChart2 size={36}/></div>
-            <div>4</div>
- <div>Survey Response</div>
-        </div>
+     <div className=" w-full h-64 mt-6">
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart data={chartData}>
+        <XAxis dataKey="title" />
+        <YAxis />
+        <Tooltip />
+        <Bar fill="#848ead" dataKey="totalResponses" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+
+
     </div>
 
-    <div className=" border mt-4 p-6 rounded-xl">
+    <div className=" border mt-8 p-6 rounded-xl">
 <div className="text-xl font-bold mb-4">Quick Actions</div>
 
 <div className="flex flex-col  gap-4 px-6">
