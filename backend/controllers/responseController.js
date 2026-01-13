@@ -70,18 +70,17 @@ exports.getSurveySummary = async (req, res) => {
 
 exports.getSurveyResult = async (req, res) => {
   try {
-  
     const survey = await Survey.findById(req.params.id);
 
     if (!survey) {
       return res.status(404).json({ message: "Survey not found" });
     }
 
+    // Map questions
     const questionMap = {};
     survey.questions.forEach((q) => {
       questionMap[q._id.toString()] = q;
     });
-
 
     const responses = await Response.find({ survey: req.params.id });
 
@@ -91,27 +90,41 @@ exports.getSurveyResult = async (req, res) => {
       response.answers.forEach((ans) => {
         const qId = ans.questionId.toString();
         const answer = ans.answer;
+        const question = questionMap[qId];
 
+        if (!question) return;
+
+        // INIT
         if (!result[qId]) {
           result[qId] = {
-            questionText: questionMap[qId]?.questionText,
-            options: questionMap[qId]?.options || [],
+            questionText: question.questionText,
+            questionType: question.questionType, // 🔥 IMPORTANT
+            options: question.options || [],
             totalResponses: 0,
-            answers: {}
+            answers:
+              question.questionType === "mcq" ? {} : [] // 🔥 KEY FIX
           };
         }
 
-        if (!result[qId].answers[answer]) {
-          result[qId].answers[answer] = 0;
+        // MCQ
+        if (question.questionType === "mcq") {
+          if (!result[qId].answers[answer]) {
+            result[qId].answers[answer] = 0;
+          }
+          result[qId].answers[answer]++;
         }
 
-        result[qId].answers[answer]++;
+        // TEXT
+        if (question.questionType === "text") {
+          result[qId].answers.push(answer);
+        }
+
         result[qId].totalResponses++;
       });
     });
 
-    return res.status(200).json(result);
+    res.status(200).json(result);
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
