@@ -36,7 +36,7 @@ function ResultBarchartPage() {
       <div className="mx-auto w-full md:w-[70%] mt-20 p-6 shadow-md">
         {resultBarchart &&
           Object.values(resultBarchart).map((q, index) => {
-            // 🔥 Convert answers to chart format
+            
             const chartData = q.options.map(option => ({
               name: option,
               count: q.answers[option] || 0
@@ -53,17 +53,39 @@ function ResultBarchartPage() {
                 </p>
 
                 {/* GRAPH */}
-                <ResponsiveContainer className='flex justify-center items-center ' width="50%" height={300}>
-                  <BarChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis allowDecimals={false} />
-                    <Tooltip />
-                    <Bar dataKey="count" fill="#3b82f6" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            );
+                {q.questionType === "mcq" && (
+          <ResponsiveContainer width="60%" height={300}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Bar dataKey="count" fill="#3b82f6" />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+
+       
+        {q.questionType === "text" && (
+          <div className="mt-4 space-y-2">
+            {q.answers.length > 0 ? (
+              q.answers.map((ans, i) => (
+                <div
+                  key={i}
+                  className="p-2 border rounded bg-gray-50"
+                >
+                  {ans}
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500">No responses yet</p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+           
+         
           })}
       </div>
     </>
