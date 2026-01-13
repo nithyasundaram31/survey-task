@@ -76,7 +76,7 @@ exports.getSurveyResult = async (req, res) => {
       return res.status(404).json({ message: "Survey not found" });
     }
 
-    // Map questions
+  
     const questionMap = {};
     survey.questions.forEach((q) => {
       questionMap[q._id.toString()] = q;
@@ -94,15 +94,15 @@ exports.getSurveyResult = async (req, res) => {
 
         if (!question) return;
 
-        // INIT
+        
         if (!result[qId]) {
           result[qId] = {
             questionText: question.questionText,
-            questionType: question.questionType, // 🔥 IMPORTANT
+            questionType: question.questionType, 
             options: question.options || [],
             totalResponses: 0,
             answers:
-              question.questionType === "mcq" ? {} : [] // 🔥 KEY FIX
+              question.questionType === "mcq" ? {} : [] 
           };
         }
 
