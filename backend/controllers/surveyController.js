@@ -18,7 +18,7 @@ const survey=new Survey({
 })
 
 await survey.save()
-return res.status(201).json(survey,{message:"survey created successfully"})
+return res.status(201).json({message:"survey created successfully",survey})
 
 }catch(err){
 return res.status(500).json({message:"server error",error:err.message})
